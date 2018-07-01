@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+if [ ! -f www.example.com.key ]; then
+    openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
+    -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" \
+    -keyout www.example.com.key  -out www.example.com.cert
+
+    openssl req -new -newkey rsa:4096 -key www.example.com.key \
+    -out www.example.com.csr \
+    -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com"
+fi
+
+gunicorn --certfile www.example.com.cert --keyfile www.example.com.key -b 0.0.0.0:2343 haproxy_api:__hug_wsgi__

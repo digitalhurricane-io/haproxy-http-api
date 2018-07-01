@@ -1,0 +1,23 @@
+
+Uses the hug and haproxyadmin libraries to expose a few endpoints for the haproxy config and stats api. 
+
+It generates a self signed ssl cert and uses basic auth. Username/Pass are constants set at the top of the haproxy_api.py file.
+Default is admin:admin
+
+I only put in the endpoints that I need for now. Feel free to add more and submit a pull request. 
+
+In the following command, make sure "/var/run" is set to the directory where the haproxy socket exists as defined in your haproxy config file.
+
+To build and run with docker:
+
+docker build -t haproxy_http_api_image . && \
+docker run -d -v /var/run:/socket_dir \
+-p 2343:2343 \
+--restart unless-stopped \
+--name haproxy_http_api \
+haproxy_http_api_image
+
+
+Example request to list all backends:
+
+http --verify=no -a admin:admin https://127.0.0.1:2343/backends
